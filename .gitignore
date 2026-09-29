@@ -1,0 +1,51 @@
+# ============================================================
+# Operations Casebook
+# Private evidence / secrets must never enter version control.
+# ============================================================
+
+# Private or raw evidence directories
+**/raw/
+**/private/
+**/private-evidence/
+**/raw-evidence/
+
+# Secrets / credentials
+.env
+.env.*
+**/.env
+**/.env.*
+
+**/secrets/
+**/credentials/
+
+*.pem
+*.key
+*.pfx
+*.p12
+*.kdbx
+*.publishsettings
+
+id_rsa
+id_rsa.*
+id_ed25519
+id_ed25519.*
+
+# Remote-desktop connection files may expose usernames,
+# hostnames, addresses, or other unnecessary infrastructure data.
+*.rdp
+
+# Azure/local authentication state if accidentally created here
+.azure/
+**/.azure/
+
+# Editor / OS clutter
+.vscode/
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# Temporary / backup files
+*.tmp
+*.temp
+*.bak
+*~
