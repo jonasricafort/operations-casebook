@@ -49,3 +49,15 @@ Desktop.ini
 *.temp
 *.bak
 *~
+
+# Local secrets / environment files
+.env
+.env.*
+!.env.example
+
+# Raw/private working material must stay outside the repository
+**/raw-evidence/
+**/private-evidence/
+
+# Local logs
+*.log
