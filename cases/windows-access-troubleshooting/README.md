@@ -142,4 +142,4 @@ The helper performs directory reads and comparisons without changing AD objects 
 
 ## Provenance
 
-Lab architecture, Active Directory and access-control configuration, fault injection, diagnostic testing, remediation, and validation were performed and verified by the author. AI tools were used for documentation drafting and code review.
+Lab architecture, Active Directory and access-control configuration, fault injection, diagnostic testing, remediation, and validation were performed and verified by the author. AI tools were used for documentation drafting, script scaffolding, and code review.
