@@ -14,6 +14,8 @@ Only sanitized technical evidence needed to demonstrate the completed lab workfl
 
 Publishable evidence should be the smallest set necessary to support the documented result.
 
+Configuration is published as minimal excerpts, with credentials, keys, and addresses removed.
+
 ## Never publish
 
 Remove or redact:
@@ -29,7 +31,7 @@ Remove or redact:
 
 ## Synthetic lab data
 
-The case uses fictional users, groups, resources, and organization data where practical.
+The cases use fictional users, groups, resources, and organization data where practical.
 
 Synthetic technical evidence may be published when it accurately represents work actually performed in the lab.
 

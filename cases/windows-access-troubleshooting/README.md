@@ -1,25 +1,25 @@
-# Windows Access Administration and Troubleshooting: Lab Case
+# Windows Access Administration and Troubleshooting: Technical Lab
 
 ## Overview
 
-Built and tested a Windows Active Directory lab to demonstrate group-based access administration, systematic troubleshooting, and validated remediation.
+Built a Windows Active Directory lab in Azure, set up group-based access to departmental shares, then diagnosed and fixed a controlled access failure.
 
-The case covers configuring departmental resource access, diagnosing a controlled authorization failure, and restoring access without unnecessarily modifying resource permissions. A read-only PowerShell helper supports account and group-membership inspection.
+Access was restored without changing any resource permissions. A read-only PowerShell helper checks account state and group membership.
 
 ## Environment and Access Model
 
 | Component | Configuration |
 |---|---|
 | Hosting | Microsoft Azure, isolated virtual network (`10.0.0.0/24`) |
-| Domain controller | `dc01` — Windows Server 2022 Datacenter Azure Edition, AD DS and DNS |
-| Client | `client01` — Windows 11 Enterprise, domain joined |
+| Domain controller | `dc01`: Windows Server 2022 Datacenter Azure Edition, AD DS and DNS |
+| Client | `client01`: Windows 11 Enterprise, domain joined |
 | Domain | `northstar.test` (`NORTHSTAR`) |
 | Domain controller IP | `10.0.0.4` |
 | Administrative access | Azure Bastion Developer |
 
-Neither VM has a public IP or directly exposed Internet-facing RDP.
+Neither VM had a public IP or directly exposed Internet-facing RDP.
 
-The domain controller's private IP is configured at the Azure virtual NIC level while Windows remains DHCP-configured. The client uses `dc01` for domain DNS resolution.
+The domain controller's private IP was configured at the Azure virtual NIC level while Windows remained DHCP-configured. The client used `dc01` for domain DNS resolution.
 
 **Group-based authorization:**
 
@@ -51,13 +51,13 @@ The healthy baseline was established from `client01`, signed in as `NORTHSTAR\op
 | `\\dc01\Operations` | ALLOW | **ALLOW** |
 | `\\dc01\Finance` | DENY | **DENY** |
 
-A controlled fault was introduced by removing Alice from `SG_Operations_Access`, leaving the account, network, DNS, and resource permissions unchanged.
+The controlled fault: Alice was removed from `SG_Operations_Access`. The account, network, DNS and resource permissions were left unchanged.
 
 After refreshing Alice's logon session, access to `\\dc01\Operations` was denied even though domain authentication remained successful.
 
 ### Investigation and Root Cause
 
-The investigation distinguished authentication, connectivity, membership, and resource-permission failures.
+The checks separated four possible causes: authentication, connectivity, group membership and resource permissions.
 
 | Diagnostic area | Findings |
 |---|---|
@@ -69,19 +69,15 @@ The investigation distinguished authentication, connectivity, membership, and re
 
 **Root cause:** An authorization failure caused by missing Active Directory security-group membership.
 
-The account could authenticate, the resource remained reachable, and its permissions were intact. The decisive difference from the healthy baseline was Alice's missing membership in the group authorized to access Operations.
+The account could authenticate, the resource remained reachable, and its permissions were intact. The one difference from the healthy baseline was Alice's missing membership in the group authorized to access Operations.
 
-**Supporting diagnostic evidence:**
-
-- [Access failure and client diagnostics](evidence/08-operations-failure-client-diagnostics.png)
-- [Account and group diagnosis](evidence/09-account-and-group-diagnosis.png)
-- [Resource permissions remained intact](evidence/10-operations-permissions-intact.png)
+Evidence: [access failure and client diagnostics](evidence/08-operations-failure-client-diagnostics.png), [account and group diagnosis](evidence/09-account-and-group-diagnosis.png), and [resource permissions intact](evidence/10-operations-permissions-intact.png).
 
 ### Security-Context Behavior
 
-A subsequent test demonstrated that removing Alice's group membership did not immediately revoke access from her existing logged-in session. Access remained allowed until she signed out and back in.
+A later test showed that removing Alice from the group did not cut off her existing session. Access stayed allowed until she signed out and back in.
 
-This illustrates why Active Directory membership changes may require a refreshed logon/security context before the new authorization state is observed.
+So a group-membership change may not take effect until the user signs in again and gets a new security token.
 
 ## Remediation and Validation
 
@@ -94,25 +90,18 @@ After a full sign-out/sign-in, the intended access model was retested:
 | Operations access | ALLOW | **ALLOW** |
 | Finance access | DENY | **DENY** |
 
-The correction restored the required access without broadening permissions to the unrelated departmental resource.
+Access was restored without widening permissions to the Finance share.
 
-**Validation evidence:**
-
-- [Operations access restored](evidence/11-operations-access-restored.png)
-- [Finance access remains denied](evidence/12-finance-access-still-denied.png)
-
-**Validated workflow:**
-
-`Healthy baseline → Controlled fault → Diagnosis → Root cause → Correction → Positive and negative retesting`
+Evidence: [Operations access restored](evidence/11-operations-access-restored.png) and [Finance access still denied](evidence/12-finance-access-still-denied.png).
 
 ## Supporting Artifacts
 
 ### Operational Records
 
-Two simulated operational records document the access-administration and incident-resolution workflows:
+Two simulated records show how the access request and the incident were handled:
 
-- [Access Request](records/access-request.md) — requested access, group assignment, authorization assumption, and validation.
-- [Access Incident](records/access-incident.md) — failure symptoms, diagnostic evidence, root cause, remediation, and closure.
+- [Access Request](records/access-request.md): requested access, group assignment, authorization assumption, and validation.
+- [Access Incident](records/access-incident.md): failure symptoms, diagnostic evidence, root cause, remediation, and closure.
 
 ### PowerShell Access Report
 
@@ -133,13 +122,9 @@ A read-only PowerShell helper that inspects:
 | Alice / `SG_Finance_Access` | `IsMember = False` |
 | Nonexistent user | Controlled user-not-found error |
 
-The helper performs directory reads and comparisons without changing AD objects or resource permissions.
+The helper only reads from the directory. It changes no AD objects or permissions.
 
 ### Evidence and Diagram
 
 - [Environment and access-model diagram](diagram/environment.md)
 - [Selected screenshots and validation evidence](evidence/)
-
-## Provenance
-
-Lab architecture, Active Directory and access-control configuration, fault injection, diagnostic testing, remediation, and validation were performed and verified by the author. AI tools were used for documentation drafting, script scaffolding, and code review.

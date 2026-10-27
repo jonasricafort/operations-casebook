@@ -1,0 +1,7 @@
+<Sysmon schemaversion="4.82">
+  <EventFiltering>
+    <ProcessCreate onmatch="include">
+      <Image condition="end with">\powershell.exe</Image>
+    </ProcessCreate>
+  </EventFiltering>
+</Sysmon>

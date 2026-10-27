@@ -50,6 +50,10 @@ Desktop.ini
 *.bak
 *~
 
+# Python caches
+__pycache__/
+*.pyc
+
 # Local secrets / environment files
 .env
 .env.*
