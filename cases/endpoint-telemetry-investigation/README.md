@@ -73,7 +73,7 @@ Set-Content -Path (Join-Path $env:TEMP 'ct-case2-marker.txt') -Value 'CT-P2-TEST
 
 This creates or overwrites a marker file in the executing user's temporary directory.
 
-Evidence: [encoded PowerShell execution](evidence/encoded-powershell-execution.png) and [marker content verified](evidence/marker-content-validation.png).
+Evidence: [encoded PowerShell execution](evidence/01-encoded-powershell-execution.png) and [marker content verified](evidence/02-marker-content-validation.png).
 
 ### Timeline and Correlation
 
@@ -103,7 +103,7 @@ All timestamps are UTC on October 20, 2026.
 
 Local and central records were correlated using the retained Sysmon XML and Wazuh alert JSON. Eight selected field-correlation checks passed for each event pair.
 
-Evidence: [local Sysmon event, Record 7960](evidence/local-sysmon-event-7960.png) and [central Wazuh record of the ordinary comparison, Record 8016](evidence/central-ordinary-event-8016.png).
+Evidence: [local Sysmon event, Record 7960](evidence/03-local-sysmon-event-7960.png) and [central Wazuh record of the ordinary comparison, Record 8016](evidence/05-central-ordinary-event-8016.png).
 
 ### Detection Logic
 
@@ -118,7 +118,7 @@ The query identifies an execution characteristic, not malicious intent; encoding
 
 Wazuh's existing rules fired on their own. The query was run separately against stored alerts and was never deployed as a Wazuh rule. The ordinary comparison still reached Wazuh, so its NON-MATCH came from the query condition itself.
 
-Evidence: [manual query MATCH on the encoded execution](evidence/manual-query-positive-match.png) and [NON-MATCH on the ordinary comparison](evidence/manual-query-ordinary-nonmatch.png).
+Evidence: [manual query MATCH on the encoded execution](evidence/04-manual-query-positive-match.png) and [NON-MATCH on the ordinary comparison](evidence/06-manual-query-ordinary-nonmatch.png).
 
 ## Findings and Disposition
 
@@ -159,12 +159,12 @@ The findings apply to the two controlled executions and the investigated window.
 
 | Evidence | What it demonstrates |
 |---|---|
-| [Encoded PowerShell execution](evidence/encoded-powershell-execution.png) | Test account, start time, parent/child PID, and successful execution |
-| [Marker verification](evidence/marker-content-validation.png) | Expected `CT-P2-TEST` content verified |
-| [Local Sysmon event](evidence/local-sysmon-event-7960.png) | Process creation, command line, identifiers, and decoded payload |
-| [Manual positive MATCH](evidence/manual-query-positive-match.png) | Encoded-command condition matched Record 7960 |
-| [Central ordinary comparison](evidence/central-ordinary-event-8016.png) | Record 8016 collected by Wazuh under rule 92027 |
-| [Manual ordinary NON-MATCH](evidence/manual-query-ordinary-nonmatch.png) | Ordinary execution did not match the encoded-command condition |
+| [Encoded PowerShell execution](evidence/01-encoded-powershell-execution.png) | Test account, start time, parent/child PID, and successful execution |
+| [Marker verification](evidence/02-marker-content-validation.png) | Expected `CT-P2-TEST` content verified |
+| [Local Sysmon event](evidence/03-local-sysmon-event-7960.png) | Process creation, command line, identifiers, and decoded payload |
+| [Manual positive MATCH](evidence/04-manual-query-positive-match.png) | Encoded-command condition matched Record 7960 |
+| [Central ordinary comparison](evidence/05-central-ordinary-event-8016.png) | Record 8016 collected by Wazuh under rule 92027 |
+| [Manual ordinary NON-MATCH](evidence/06-manual-query-ordinary-nonmatch.png) | Ordinary execution did not match the encoded-command condition |
 
 The images are selected captures from the October 20 investigation. Original evidence is retained privately.
 
